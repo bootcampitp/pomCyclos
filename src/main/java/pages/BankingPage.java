@@ -4,10 +4,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class BankingPage {
 
     private WebDriver driver;
+    private WebDriverWait wait;
 
     @FindBy(xpath="//*[@class='nav-item-text' and contains(text(), 'Payment to user')]")
     private WebElement payUserLink;
@@ -36,7 +39,7 @@ public class BankingPage {
     @FindBy(xpath = "//*[contains(text(), 'Confirm')]")
     private WebElement confirmButton;
 
-    @FindBy(css = ".content-title.d-flex")
+    @FindBy(css = ".title-text.text-truncate.flex-grow-1.d-flex.align-items-center")
     private WebElement paymentConfirmation;
 
     @FindBy(css = ".invalid-feedback")
@@ -44,6 +47,7 @@ public class BankingPage {
 
     public BankingPage(WebDriver driver) {
         this.driver = driver;
+        this.wait = new WebDriverWait(driver, 10);
         PageFactory.initElements(driver, this);
     }
 
@@ -51,7 +55,7 @@ public class BankingPage {
         payUserLink.click();
         payeesList.click();
         activeWalking.click();
-        this.amount.sendKeys(amount);
+        wait.until(ExpectedConditions.elementToBeClickable(this.amount)).sendKeys(amount);
         scheduling.click();
         payNow.click();
         this.description.sendKeys(description);
@@ -63,7 +67,7 @@ public class BankingPage {
     }
 
     public String paymentConfirmationText(){
-        return paymentConfirmation.getText();
+        return wait.until(ExpectedConditions.visibilityOf(paymentConfirmation)).getText();
     }
 
     public String getInvalidAmountError(){
